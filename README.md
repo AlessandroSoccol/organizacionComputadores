@@ -1,2 +1,20 @@
-# organizacionComputadores
-Entrega proyectos 2 y 3 de organizacion de computadores. Realizado por Alessandro Soccol Mejia y Santiago Molano Jaramillo
+**Organización de computadores**
+
+**
+Proyecto 2
+**
+2
+
+** 2026
+-
+1**
+
+**Integrantes
+ 
+proyecto 2
+**
+
+* Alessandro Soccol Mejía
+* Santiago Molano Jaramillo
+
+[Nombre alumno 2
