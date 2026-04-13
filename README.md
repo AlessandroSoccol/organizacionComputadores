@@ -1,20 +1,11 @@
 **Organización de computadores**
 
-**
-Proyecto 2
-**
-2
+**Proyecto 2**
 
-** 2026
--
-1**
+** 2026 - 1**
 
-**Integrantes
- 
-proyecto 2
-**
+**Integrantes proyecto 2**
 
 * Alessandro Soccol Mejía
 * Santiago Molano Jaramillo
 
-[Nombre alumno 2
