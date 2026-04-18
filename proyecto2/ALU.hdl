@@ -26,5 +26,79 @@ CHIP ALU {
         result;     // if (shift left) equals in[15]
                     // if (shift right) equals in[0] 
     PARTS: 
+    //ALU
+    Mux16(a= x, b=false , sel=zx , out=x1 ); 
+    Not16(in= x1, out=Nx1 );
+    Mux16(a= x1, b=Nx1 , sel=nx , out=x2);
 
-} 
+    Mux16(a= y, b=false , sel=zy , out=y1 );
+    Not16(in= y1, out=Ny1 );
+    Mux16(a= y1, b=Ny1 , sel=ny , out=y2 );
+
+    And16(a=x2 , b=y2 , out=and );
+    Add16(a= x2, b=y2 , out= add);
+
+    //Separacion de los datos de F
+    Mux16(a=and, b=add, sel=f, out=F, 
+        out[0]=F0, 
+        out[1]=F1, 
+        out[2]=F2, 
+        out[3]=F3,
+        out[4]=F4, 
+        out[5]=F5, 
+        out[6]=F6, 
+        out[7]=F7,
+        out[8]=F8, 
+        out[9]=F9, 
+        out[10]=F10, 
+        out[11]=F11,
+        out[12]=F12, 
+        out[13]=F13, 
+        out[14]=F14, 
+        out[15]=F15);
+    
+    Not16(in= F, out=NF );
+        //Outputs
+    Mux16(a= F, b=NF , sel=no , out=outa, out[0..7]=A, out[8..15]=B, out[15]=NG);
+
+    //Shifter
+    Add16(a=F , b= F, out=LeftShift );
+    Mux16(a=LeftShift , 
+    b[0]=F1, 
+    b[1]=F2, 
+    b[2]=F3, 
+    b[3]=F4, 
+    b[4]=F5, 
+    b[5]=F6, 
+    b[6]=F7, 
+    b[7]=F8,
+    b[8]=F9, 
+    b[9]=F10, 
+    b[10]=F11, 
+    b[11]=F12, 
+    b[12]=F13, 
+    b[13]=F14, 
+    b[14]=F15, 
+    b[15]=false,
+    sel=f , out=Shift );
+    
+    //Shifter o no
+    //Condicionales Shifter
+    Or(a=zx , b= nx, out=P );
+    Not(in=P , out=NP );
+    Or(a=zy , b=ny , out=Q );
+    Not(in= Q, out=NQ );
+    And(a= NP, b=NQ , out=K );
+    And(a= K, b=no , out=FIN );
+
+    //Multiplexor
+    Mux16(a= outa, b=Shift , sel=FIN , out= out);
+
+  
+    //outputs
+    And(a=NG , b=true , out=ng );
+    Or8Way(in= A, out=or1 );
+    Or8Way(in= B, out=or2 );
+    Or(a= or1, b=or2 , out=Nzr );
+    Not(in= Nzr, out=zr );
+}
