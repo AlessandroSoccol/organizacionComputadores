@@ -29,7 +29,23 @@ CHIP ALU {
     //ALU
     Mux16(a= x, b=false , sel=zx , out=x1 ); 
     Not16(in= x1, out=Nx1 );
-    Mux16(a= x1, b=Nx1 , sel=nx , out=x2);
+    Mux16(a= x1, b=Nx1 , sel=nx , out=x2,
+        out[0]=x2out0,
+        out[1]=x2out1,
+        out[2]=x2out2,
+        out[3]=x2out3,
+        out[4]=x2out4,
+        out[5]=x2out5,
+        out[6]=x2out6,
+        out[7]=x2out7,
+        out[8]=x2out8,
+        out[9]=x2out9,
+        out[10]=x2out10,
+        out[11]=x2out11,
+        out[12]=x2out12,
+        out[13]=x2out13,
+        out[14]=x2out14,
+        out[15]=x2out15);
 
     Mux16(a= y, b=false , sel=zy , out=y1 );
     Not16(in= y1, out=Ny1 );
@@ -58,27 +74,27 @@ CHIP ALU {
         out[15]=F15);
     
     Not16(in= F, out=NF );
-        //Outputs
+    //Outputs
     Mux16(a= F, b=NF , sel=no , out=outa, out[0..7]=A, out[8..15]=B, out[15]=NG);
 
     //Shifter
-    Add16(a=F , b= F, out=LeftShift );
+    Add16(a=F , b= F, out=LeftShift );//Left Shift
     Mux16(a=LeftShift , 
-    b[0]=F1, 
-    b[1]=F2, 
-    b[2]=F3, 
-    b[3]=F4, 
-    b[4]=F5, 
-    b[5]=F6, 
-    b[6]=F7, 
-    b[7]=F8,
-    b[8]=F9, 
-    b[9]=F10, 
-    b[10]=F11, 
-    b[11]=F12, 
-    b[12]=F13, 
-    b[13]=F14, 
-    b[14]=F15, 
+    b[0]=x2out1, 
+    b[1]=x2out2, 
+    b[2]=x2out3, 
+    b[3]=x2out4, 
+    b[4]=x2out5, 
+    b[5]=x2out6, 
+    b[6]=x2out7, 
+    b[7]=x2out8,
+    b[8]=x2out9, 
+    b[9]=x2out10, 
+    b[10]=x2out11, 
+    b[11]=x2out12, 
+    b[12]=x2out13, 
+    b[13]=x2out14, 
+    b[14]=x2out15, 
     b[15]=false,
     sel=f , out=Shift );
     
@@ -93,12 +109,19 @@ CHIP ALU {
 
     //Multiplexor
     Mux16(a= outa, b=Shift , sel=FIN , out= out);
-
   
     //outputs
+    //ng
     And(a=NG , b=true , out=ng );
+
+    //zr
     Or8Way(in= A, out=or1 );
     Or8Way(in= B, out=or2 );
     Or(a= or1, b=or2 , out=Nzr );
     Not(in= Nzr, out=zr );
+
+    //result
+    Mux16(a=F15 , b=x2out0 , sel=FIN , out=RES)
+    And(a=RES, b=FIN, out=result);
+    ;
 }
