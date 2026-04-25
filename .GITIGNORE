@@ -1,0 +1,7 @@
+*.class
+*.hack
+*.asm
+out/
+.vscode/
+.DS_Store
+Thumbs.db

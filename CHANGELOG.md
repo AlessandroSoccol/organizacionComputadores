@@ -1,4 +1,4 @@
-#Changelog
+# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com), and this
@@ -32,3 +32,9 @@ project adheres to [Semantic Versioning](https://semver.org).
 
 - ALU files (hdl and md5) completed
 - CHANGELOG first update
+
+## [1.2.0] - 2026-04-25
+
+- HackDisassembler class (java and md5) completed
+- Documentation in proyecto3 updated (API.md, DESIGN.md, USER_GUIDE.md and README.md)
+- README.md in the root directory updated
