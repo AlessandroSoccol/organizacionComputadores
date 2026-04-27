@@ -1,0 +1,22 @@
+/*********
+ * Computer.hdl – Computador Hack completo
+ * Une la CPU, la memoria y la ROM
+ * Autor 1:
+ * Autor 2:
+ *********/
+
+
+CHIP Computer {
+
+    IN reset;
+
+    PARTS:
+	
+	ROM32K(address=pc,out=instruction);
+
+	CPU(inM=inM,instruction=instruction,reset=reset,outM=outM,writeM=writeM,addressM=addressM,pc=pc);
+
+	Memory(in=outM,load=writeM,address=addressM,out=inM);
+
+
+}
