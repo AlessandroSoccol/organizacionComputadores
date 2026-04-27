@@ -1,0 +1,91 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/5/CPU.hdl
+/**
+ * The Hack Central Processing unit (CPU).
+ * Parses the binary code in the instruction input and executes it according to the
+ * Hack machine language specification. In the case of a C-instruction, computes the
+ * function specified by the instruction. If the instruction specifies to read a memory
+ * value, the inM input is expected to contain this value. If the instruction specifies
+ * to write a value to the memory, sets the outM output to this value, sets the addressM
+ * output to the target address, and asserts the writeM output (when writeM = 0, any
+ * value may appear in outM).
+ * If the reset input is 0, computes the address of the next instruction and sets the
+ * pc output to that value. If the reset input is 1, sets pc to 0.
+ * Note: The outM and writeM outputs are combinational: they are affected by the
+ * instruction's execution during the current cycle. The addressM and pc outputs are
+ * clocked: although they are affected by the instruction's execution, they commit to
+ * their new values only in the next cycle.
+ */
+ 
+CHIP CPU {
+    IN  inM[16],
+        instruction[16],
+        reset;
+
+    OUT outM[16],
+        writeM,
+        addressM[15],
+        pc[15];
+
+    PARTS:
+     // Es instruccion tipo A si el bit 15 es 0
+    Not(in=instruction[15], out=esA);
+
+    // Mux para entrada del registro A
+    // Si es tipo A -> usa la instruccion completa
+    // Si es tipo C -> usa la salida de la ALU
+    Mux16(a=instruction, b=aluOut, sel=instruction[15], out=muxA);
+    
+ // Registro A se carga si es tipo A o si dest incluye A (bit 5)
+    Or(a=esA, b=instruction[5], out=loadA);
+    ARegister(in=muxA, load=loadA, out=regA, out[0..14]=addressM);
+
+
+  // Registro D se carga solo si es tipo C y dest incluye D (bit 4)
+    And(a=instruction[15], b=instruction[4], out=loadD);
+    DRegister(in=aluOut, load=loadD, out=regD);
+    
+        // Mux para segundo operando de la ALU
+    // Si bit 12 = 0 -> usa A
+    // Si bit 12 = 1 -> usa M 
+    Mux16(a=regA, b=inM, sel=instruction[12], out=aluY);
+  //ALU
+  ALU(
+        x=regD,
+        y=aluY,
+        zx=instruction[11],
+        nx=instruction[10],
+        zy=instruction[9],
+        ny=instruction[8],
+        f=instruction[7],
+        no=instruction[6],
+        out=aluOut,
+        out=outM,
+        zr=zr,
+        ng=ng
+    );
+
+    // writeM solo si es tipo C y dest incluye M (bit 3)
+  And(a=instruction[15], b=instruction[3], out=writeM);
+  // Saltos
+   Not(in=ng, out=notNg);   
+ Not(in=zr, out=notZr);
+    
+    And(a=notNg, b=notZr, out=pos);
+
+  // j1=instruction[2] -> salta si es negativo
+    // j2=instruction[1] _> salta si es cero
+     // j3=instruction[0] -> salta si es positivo
+    And(a=instruction[2], b=ng,  out=j1);
+    And(a=instruction[1], b=zr,  out=j2);
+    And(a=instruction[0], b=pos, out=j3);
+    
+    //Verificar si se cumple la condición del salto 
+    Or(a=j1, b=j2, out=j12);
+    Or(a=j12, b=j3, out=jump);
+     // Solo saltar si es tipo C
+    And(a=instruction[15], b=jump, out=loadPC);
+    PC(in=regA, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
+}
