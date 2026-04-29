@@ -10,27 +10,47 @@ Descripción del diseño del sistema, diagrama de clases y decisiones de arquite
 ┌─────────────────────────────────────┐
 │           HackAssembler             │
 │─────────────────────────────────────│
-│ + main(args: String[]) : void       │
+│ + main(args: String[]) : void       |
+|  Parser                             |
+|  - lineas: ArrayList                |
+|  - posActual: int                   |
+| + avanzar()                         |
+|  + getTipo(): String                |
+|  CodeGenerator                      |
+|  - tablaComp: HashMap               |
+|  - tablaDest: HashMap               |
+|  + generate()                       |
+|  + traducirA(): String              |
+|  HackDisassembler                   |
+|  - tablaComp: HashMap               | 
+|  - tablaDest: HashMap               |
+|  + disassemble()                    |
+|  - traducirLinea()                  |
+|  SymbolTable                        |
+|  - tabla: HashMap                   |
+|  + agregar(simbolo,dir)             |
+|  +  existe(simbolo):boolean         |
+|  + getDireccion(): in               |
 └──────────────┬──────────────────────┘
                │ detecta modo por argumentos
        ┌───────┴────────┐
        │                │
        ▼                ▼
-┌──────────────┐  ┌──────────────────────────────────────┐
-│HackAssembler │  │         HackDisassembler             │
-│ (ensamblador)│  │──────────────────────────────────────│
-│──────────────│  │ + main(args: String[]) : void        │
-│ ...          │  │ + traduccionTipoA(bits: char[])      │
-│              │  │   : String                           │
-│              │  │ + traduccionTipoC(bits: char[])      │
-│              │  │   : String                           │
-│              │  │ + traducirComp(compB: char[],        │
-│              │  │   a: char) : String                  │
-│              │  │ + traducirDest(destB: char[])        │
-│              │  │   : String                           │
-│              │  │ + traducirJump(bits: char[])         │
-│              │  │   : String                           │
-└──────────────┘  └──────────────────────────────────────┘
+┌──────────────────────────────────────┐
+│         HackDisassembler             │
+│──────────────────────────────────────│
+│ + main(args: String[]) : void        │
+│ + traduccionTipoA(bits: char[])      │
+│   : String                           │
+│ + traduccionTipoC(bits: char[])      │
+│   : String                           │
+│ + traducirComp(compB: char[],        │
+│   a: char) : String                  │
+│ + traducirDest(destB: char[])        │
+│   : String                           │
+│ + traducirJump(bits: char[])         │
+│   : String                           │
+└──────────────────────────────────────┘
 ```
 
 ---
@@ -42,7 +62,7 @@ Descripción del diseño del sistema, diagrama de clases y decisiones de arquite
 main(args)
   └── args.length == 1
         └── HackAssembler.ensamblar(Prog.asm)
-              └── Escribe Prog.hack
+              └── 
 ```
 
 ### HackDisassembler (`Prog.hack` → `ProgDis.asm`)
